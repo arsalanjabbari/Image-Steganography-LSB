@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 
-pixels = []
 
 def makePicture(pic):
     img1 = []
@@ -61,9 +60,13 @@ def stg(message):
     for i in range(0, len(messageInBin), 6):
         putDataInPixel(pixelIndex, messageInBin[i: i + 6])
 
+def main():
+    pixels = []
+    pictureName = "testing.jpeg"
+    messageText = getTextFromFile("message.txt")
+    pixels += getPicture(pictureName)
+    stg(messageText)
+    cv2.imwrite('encrypted_' + pictureName, makePicture(pixels))
 
-pictureName = "testing.jpeg"
-messageText = getTextFromFile("message.txt")
-pixels += getPicture(pictureName)
-stg(messageText)
-cv2.imwrite('encrypted_' + pictureName, makePicture(pixels))
+if __name__ == "main":
+    main()
