@@ -62,11 +62,13 @@ def stg(message):
 
 def main():
     pixels = []
-    pictureName = "testing.jpeg"
-    messageText = getTextFromFile("message.txt")
+    pictureName = input("Enter the picture's file name, which you're gonna use: ")
+    messageText = input("Enter the text file name, which you're gonna encrypt: ")
+    messageText = getTextFromFile(messageText)
     pixels += getPicture(pictureName)
     stg(messageText)
-    cv2.imwrite('encrypted_' + pictureName, makePicture(pixels))
+    encryptedPicture = makePicture(pixels)
+    cv2.imwrite('encrypted_' + pictureName, encryptedPicture)
 
 if __name__ == "main":
     main()
