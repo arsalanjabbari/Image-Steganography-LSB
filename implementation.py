@@ -40,10 +40,14 @@ def putDataInPixel(index, sixBinary, pixels):
     pixels[index][2] |= int(sixBinary[0:2], 2)
     pixels[index][3] |= int(sixBinary[2:4], 2)
     pixels[index][4] |= int(sixBinary[4:6], 2)
-def exportDataFromPixel(index, sixBinary, pixels):
-    pixels[index][2] |= int(sixBinary[0:2], 2)
-    pixels[index][3] |= int(sixBinary[2:4], 2)
-    pixels[index][4] |= int(sixBinary[4:6], 2)
+
+
+def exportDataFromPixel(index, pixels):
+    temp = ""
+    temp += str(pixels[index][2])
+    temp += str(pixels[index][3])
+    temp += str(pixels[index][4])
+    return temp
 
 
 def stg(message,pixels):
@@ -61,11 +65,29 @@ def stg(message,pixels):
         messageInBin += binaryStr
         messageInBin += (6 - (len(messageInBin) % 6)) * "0"
     for i in range(0, len(messageInBin), 6):
-        putDataInPixel(pixelIndex, messageInBin[i: i + 6],pixels)
+        putDataInPixel(pixelIndex, messageInBin[i: i + 6], pixels)
+        pixelIndex += 1
+
+def decrypt(pixels):
+    msgLenInBinary = ""
+    secretMsgInBinary = ""
+    pixelIndex = 0
+    for index in range(0,24,6):
+        msgLenInBinary += exportDataFromPixel(index, pixels)
+        pixelIndex += 1
+    msgLen = int(msgLenInBinary)
+    numCheckingBits = msgLen*8
+    for i in range(pixelIndex,numCheckingBits,2):
+        secretMsgInBinary += exportDataFromPixel(i, pixels)
+    secretMsg = ""
+    for j in range(0,numCheckingBits,8):
+        secretMsg += chr(int(secretMsgInBinary[i:i+8]))
+    return secretMsg
 
 
-def decrypt(image):
-    pass
+
+
+
     # return string
 
 
@@ -83,7 +105,7 @@ def main():
             messageText = input("Enter the text file name, which you're gonna encrypt: ")
             messageText = getTextFromFile(messageText)
             pixels += getPicture(pictureName)
-            stg(messageText,pixels)
+            stg(messageText, pixels)
             encryptedPicture = makePicture(pixels)
             dbWrite = 'encrypted_' + pictureName
             itsPassword = input("Enter a password for your encrypted text: ")
@@ -100,9 +122,10 @@ def main():
                 for encPic in dataBase:
                     if pictureName == encPic[0]:
                         if password == encPic[1]:
-                            theSecretMsg = decrypt(pictureName)
-                            includingFile = open("export.txt", "x")
-                            includingFile.write("Woops! I have deleted the content!")
+                            pixels += getPicture(pictureName)
+                            theSecretMsg = decrypt(pixels)
+                            includingFile = open(pictureName + "_export.txt", "x")
+                            includingFile.write(theSecretMsg)
                             includingFile.close()
 
         elif task_number == 3:
