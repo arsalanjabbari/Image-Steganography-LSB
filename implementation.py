@@ -61,6 +61,7 @@ def stg(message,pixels):
         putDataInPixel(pixelIndex, messageInBin[i: i + 6],pixels)
 
 def decrypt(image):
+    pass
 
 
 
