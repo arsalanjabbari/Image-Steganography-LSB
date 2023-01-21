@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import tkinter as tk
 
 
 def makePicture(pic):
@@ -60,15 +60,53 @@ def stg(message,pixels):
     for i in range(0, len(messageInBin), 6):
         putDataInPixel(pixelIndex, messageInBin[i: i + 6],pixels)
 
+def decrypt(image):
+
+
+
+
+
+
 def main():
     pixels = []
-    pictureName = input("Enter the picture's file name, which you're gonna use: ")
-    messageText = input("Enter the text file name, which you're gonna encrypt: ")
-    messageText = getTextFromFile(messageText)
-    pixels += getPicture(pictureName)
-    stg(messageText,pixels)
-    encryptedPicture = makePicture(pixels)
-    cv2.imwrite('encrypted_' + pictureName, encryptedPicture)
+    dataBase = []
+    print("Welcome!")
+    print("1. Encrypt a message in an image.")
+    print("2. Store an image in cloud.")
+    print("3. Quit")
+    while True:
+        task_number = int(input("Enter number of your wanted task: "))
+        if task_number == 1:
+            pictureName = input("Enter the picture's file name, which you're gonna use: ")
+            messageText = input("Enter the text file name, which you're gonna encrypt: ")
+            messageText = getTextFromFile(messageText)
+            pixels += getPicture(pictureName)
+            stg(messageText,pixels)
+            encryptedPicture = makePicture(pixels)
+            dbWrite = 'encrypted_' + pictureName
+            itsPassword = input("Enter a password for your encrypted text: ")
+            cv2.imwrite(dbWrite, encryptedPicture)
+            dataBase += [(dbWrite, itsPassword)]
+        elif task_number == 2:
+            pictureName = input("Enter the picture's file name, which you're gonna use: ")
+            upcoming = input("Press an <Enter> to save your image.")
+            if upcoming == "":
+                print("\nLoading ...")
+                print("Done!")
+            else:
+                password = upcoming
+                for encPic in dataBase:
+                    if pictureName == encPic[0]:
+                        if password == encPic[1]:
+                            decrypt(pictureName)
+        elif task_number == 3:
+            print(dataBase)
+            quit()
+        else:
+            print("Invalid task.")
+
+
+
 
 if __name__ == "__main__":
     main()
