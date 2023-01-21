@@ -37,19 +37,19 @@ def getPicture(filename):
     return piclist
 
 
-def putDataInPixel(index, sixBinary):
+def putDataInPixel(index, sixBinary,pixels):
     pixels[index][2] |= int(sixBinary[0:2], 2)
     pixels[index][3] |= int(sixBinary[2:4], 2)
     pixels[index][4] |= int(sixBinary[4:6], 2)
 
 
-def stg(message):
+def stg(message,pixels):
     messageLength = len(message)
     messageLengthBin = bin(messageLength)[2:]
     messageLengthBin = (24 - len(messageLengthBin)) * "0" + messageLengthBin
     pixelIndex = 0
     for i in range(0, 24, 6):
-        putDataInPixel(pixelIndex, messageLengthBin[i: i + 6])
+        putDataInPixel(pixelIndex, messageLengthBin[i: i + 6],pixels)
         pixelIndex += 1
     messageInBin = ""
     for char in message:
@@ -58,7 +58,7 @@ def stg(message):
         messageInBin += binaryStr
         messageInBin += (6 - (len(messageInBin) % 6)) * "0"
     for i in range(0, len(messageInBin), 6):
-        putDataInPixel(pixelIndex, messageInBin[i: i + 6])
+        putDataInPixel(pixelIndex, messageInBin[i: i + 6],pixels)
 
 def main():
     pixels = []
@@ -66,10 +66,9 @@ def main():
     messageText = input("Enter the text file name, which you're gonna encrypt: ")
     messageText = getTextFromFile(messageText)
     pixels += getPicture(pictureName)
-    stg(messageText)
+    stg(messageText,pixels)
     encryptedPicture = makePicture(pixels)
     cv2.imwrite('encrypted_' + pictureName, encryptedPicture)
-    print(12)
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()
