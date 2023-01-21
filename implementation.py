@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import tkinter as tk
 
 
 def makePicture(pic):
@@ -37,7 +36,11 @@ def getPicture(filename):
     return piclist
 
 
-def putDataInPixel(index, sixBinary,pixels):
+def putDataInPixel(index, sixBinary, pixels):
+    pixels[index][2] |= int(sixBinary[0:2], 2)
+    pixels[index][3] |= int(sixBinary[2:4], 2)
+    pixels[index][4] |= int(sixBinary[4:6], 2)
+def exportDataFromPixel(index, sixBinary, pixels):
     pixels[index][2] |= int(sixBinary[0:2], 2)
     pixels[index][3] |= int(sixBinary[2:4], 2)
     pixels[index][4] |= int(sixBinary[4:6], 2)
@@ -60,12 +63,10 @@ def stg(message,pixels):
     for i in range(0, len(messageInBin), 6):
         putDataInPixel(pixelIndex, messageInBin[i: i + 6],pixels)
 
+
 def decrypt(image):
     pass
-
-
-
-
+    # return string
 
 
 def main():
@@ -99,14 +100,16 @@ def main():
                 for encPic in dataBase:
                     if pictureName == encPic[0]:
                         if password == encPic[1]:
-                            decrypt(pictureName)
+                            theSecretMsg = decrypt(pictureName)
+                            includingFile = open("export.txt", "x")
+                            includingFile.write("Woops! I have deleted the content!")
+                            includingFile.close()
+
         elif task_number == 3:
             print(dataBase)
             quit()
         else:
             print("Invalid task.")
-
-
 
 
 if __name__ == "__main__":
