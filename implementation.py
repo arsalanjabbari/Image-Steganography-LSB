@@ -69,6 +69,7 @@ def main():
     stg(messageText)
     encryptedPicture = makePicture(pixels)
     cv2.imwrite('encrypted_' + pictureName, encryptedPicture)
+    print(12)
 
 if __name__ == "main":
     main()
