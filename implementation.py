@@ -41,15 +41,27 @@ def putDataInPixel(index, sixBinary, pixels):
     pixels[index][3] &= 252
     pixels[index][4] &= 252
     pixels[index][2] |= int(sixBinary[0:2], 2)
+    # print(bin(pixels[index][2])[2:])
     pixels[index][3] |= int(sixBinary[2:4], 2)
+    # print(bin(pixels[index][3])[2:])
     pixels[index][4] |= int(sixBinary[4:6], 2)
+    # print(bin(pixels[index][4])[2:])
 
 
 def exportDataFromPixel(index, pixels):
     temp = ""
-    temp += bin(pixels[index][4])[-2:]
-    temp += bin(pixels[index][3])[-2:]
-    temp += bin(pixels[index][2])[-2:]
+    firstLocal = bin(pixels[index][2] & 3)[2:]
+    firstLocal = (2 - len(firstLocal))*"0" + firstLocal
+    temp += firstLocal
+    print(temp)
+    secondLocal = bin(pixels[index][3] & 3)[2:]
+    secondLocal = (2 - len(secondLocal)) * "0" + secondLocal
+    temp += secondLocal
+    print(temp)
+    thirdLocal = bin(pixels[index][4] & 3)[2:]
+    thirdLocal = (2 - len(thirdLocal))*"0" + thirdLocal
+    temp += thirdLocal
+    print(temp)
     return temp
 
 
@@ -58,29 +70,35 @@ def stg(message,pixels):
     messageLengthBin = bin(messageLength)[2:]
     messageLengthBin = (24 - len(messageLengthBin)) * "0" + messageLengthBin
     pixelIndex = 0
+    # print(messageLengthBin)
     for i in range(0, 24, 6):
         putDataInPixel(pixelIndex, messageLengthBin[i: i + 6],pixels)
+        print(pixels[pixelIndex])
         pixelIndex += 1
+    # quit()
     messageInBin = ""
     for char in message:
         binaryStr = bin(ord(char))[2:]
         binaryStr = (8 - len(binaryStr)) * "0" + binaryStr
         messageInBin += binaryStr
-        messageInBin += (6 - (len(messageInBin) % 6)) * "0"
+        messageInBin = (6 - (len(messageInBin) % 6)) * "0" + messageInBin
+
+    pixelIndex += 1
     for i in range(0, len(messageInBin), 6):
         putDataInPixel(pixelIndex, messageInBin[i: i + 6], pixels)
         pixelIndex += 1
 
 def decrypt(pixels):
+
     msgLenInBinary = ""
     secretMsgInBinary = ""
-    pixelIndex = 0
-    for ind in range(0,24,6):
-        msgLenInBinary += exportDataFromPixel(pixelIndex, pixels)
-        pixelIndex += 1
+    for ind in range(4):
+        print(pixels[ind])
+        msgLenInBinary += exportDataFromPixel(ind, pixels)
     print(msgLenInBinary)
     msgLen = int(msgLenInBinary, 2)
     print(msgLen)
+    quit()
     numCheckingBits = msgLen*8
     for i in range(24,numCheckingBits,2):
         secretMsgInBinary += exportDataFromPixel(i, pixels)
@@ -104,6 +122,7 @@ def main():
             messageText = getTextFromFile(messageText)
             pixels += getPicture(pictureName)
             stg(messageText, pixels)
+            # print(pixels[3])
             encryptedPicture = makePicture(pixels)
             dbWrite = 'encrypted_' + pictureName
             itsPassword = input("Enter a password for your encrypted text: ")
