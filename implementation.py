@@ -37,6 +37,9 @@ def getPicture(filename):
 
 
 def putDataInPixel(index, sixBinary, pixels):
+    pixels[index][2] &= 252
+    pixels[index][3] &= 252
+    pixels[index][4] &= 252
     pixels[index][2] |= int(sixBinary[0:2], 2)
     pixels[index][3] |= int(sixBinary[2:4], 2)
     pixels[index][4] |= int(sixBinary[4:6], 2)
@@ -93,7 +96,6 @@ def decrypt(pixels):
 
 def main():
     pixels = []
-    dataBase = []
     print("Welcome!")
     print("1. Encrypt a message in an image.")
     print("2. Store an image in cloud.")
@@ -109,8 +111,10 @@ def main():
             encryptedPicture = makePicture(pixels)
             dbWrite = 'encrypted_' + pictureName
             itsPassword = input("Enter a password for your encrypted text: ")
+            newP = open("passwords.txt","a")
+            newP.write(itsPassword)
+            newP.close()
             cv2.imwrite(dbWrite, encryptedPicture)
-            dataBase += [(dbWrite, itsPassword)]
         elif task_number == 2:
             pictureName = input("Enter the picture's file name, which you're gonna use: ")
             upcoming = input("Press an <Enter> to save your image.")
@@ -119,17 +123,16 @@ def main():
                 print("Done!")
             else:
                 password = upcoming
-                for encPic in dataBase:
-                    if pictureName == encPic[0]:
-                        if password == encPic[1]:
-                            pixels += getPicture(pictureName)
-                            theSecretMsg = decrypt(pixels)
-                            includingFile = open(pictureName + "_export.txt", "x")
-                            includingFile.write(theSecretMsg)
-                            includingFile.close()
+                checkP = open("passwords.txt","r")
+                for i in checkP:
+                    if password == i:
+                        pixels += getPicture(pictureName)
+                        theSecretMsg = decrypt(pixels)
+                        includingFile = open(pictureName + "_export.txt", "x")
+                        includingFile.write(theSecretMsg)
+                        includingFile.close()
 
         elif task_number == 3:
-            print(dataBase)
             quit()
         else:
             print("Invalid task.")
