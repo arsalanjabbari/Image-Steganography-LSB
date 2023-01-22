@@ -84,18 +84,11 @@ def decrypt(pixels):
         secretMsgInBinary += exportDataFromPixel(i, pixels)
     secretMsg = ""
     for j in range(0,numCheckingBits,8):
-        secretMsg += chr(int(secretMsgInBinary[i:i+8]))
+        secretMsg += chr(int(secretMsgInBinary[j:j+8]))
     return secretMsg
 
 
-
-
-
-    # return string
-
-
 def main():
-    pixels = []
     print("Welcome!")
     print("1. Encrypt a message in an image.")
     print("2. Store an image in cloud.")
@@ -103,6 +96,7 @@ def main():
     while True:
         task_number = int(input("Enter number of your wanted task: "))
         if task_number == 1:
+            pixels = []
             pictureName = input("Enter the picture's file name, which you're gonna use: ")
             messageText = input("Enter the text file name, which you're gonna encrypt: ")
             messageText = getTextFromFile(messageText)
@@ -113,9 +107,11 @@ def main():
             itsPassword = input("Enter a password for your encrypted text: ")
             newP = open("passwords.txt","a")
             newP.write(itsPassword)
+            newP.write("\n")
             newP.close()
             cv2.imwrite(dbWrite, encryptedPicture)
         elif task_number == 2:
+            pixels = []
             pictureName = input("Enter the picture's file name, which you're gonna use: ")
             upcoming = input("Press an <Enter> to save your image.")
             if upcoming == "":
@@ -124,7 +120,9 @@ def main():
             else:
                 password = upcoming
                 checkP = open("passwords.txt","r")
-                for i in checkP:
+                lines = checkP.readlines()
+                for i in lines:
+                    i = i[:-1]
                     if password == i:
                         pixels += getPicture(pictureName)
                         theSecretMsg = decrypt(pixels)
