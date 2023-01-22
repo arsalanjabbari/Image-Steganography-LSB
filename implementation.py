@@ -47,9 +47,9 @@ def putDataInPixel(index, sixBinary, pixels):
 
 def exportDataFromPixel(index, pixels):
     temp = ""
-    temp += str(pixels[index][2])
-    temp += str(pixels[index][3])
-    temp += str(pixels[index][4])
+    temp += bin(pixels[index][4])[-2:]
+    temp += bin(pixels[index][3])[-2:]
+    temp += bin(pixels[index][2])[-2:]
     return temp
 
 
@@ -75,12 +75,14 @@ def decrypt(pixels):
     msgLenInBinary = ""
     secretMsgInBinary = ""
     pixelIndex = 0
-    for index in range(0,24,6):
-        msgLenInBinary += exportDataFromPixel(index, pixels)
+    for ind in range(0,24,6):
+        msgLenInBinary += exportDataFromPixel(pixelIndex, pixels)
         pixelIndex += 1
-    msgLen = int(msgLenInBinary)
+    print(msgLenInBinary)
+    msgLen = int(msgLenInBinary, 2)
+    print(msgLen)
     numCheckingBits = msgLen*8
-    for i in range(pixelIndex,numCheckingBits,2):
+    for i in range(24,numCheckingBits,2):
         secretMsgInBinary += exportDataFromPixel(i, pixels)
     secretMsg = ""
     for j in range(0,numCheckingBits,8):
@@ -122,8 +124,8 @@ def main():
                 checkP = open("passwords.txt","r")
                 lines = checkP.readlines()
                 for i in lines:
-                    i = i[:-1]
-                    if password == i:
+                    temp = i[:-1]
+                    if password == temp:
                         pixels += getPicture(pictureName)
                         theSecretMsg = decrypt(pixels)
                         includingFile = open(pictureName + "_export.txt", "x")
