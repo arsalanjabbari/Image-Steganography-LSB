@@ -2,8 +2,8 @@
 
 Image-Steganography-LSB is a command-line application that enables users to perform steganography using the Least Significant Bit (LSB) algorithm on images. This technique allows you to hide sensitive information within image files in a way that is not detectable by the human eye.
 
-![](outcome.png)
-![](message-intro.png)
+<img src="outcome.png" alt="drawing" width="200"/>
+<img src="message-intro.png" alt="drawing" width="200"/>
 
 ## Table of Contents
 
